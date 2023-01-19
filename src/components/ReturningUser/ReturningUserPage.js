@@ -34,9 +34,11 @@ function ReturningUserPage() {
   const [pathway, setPathway] = useState([]);
   const [username, setUsername] = useState("");
   const [userData, setUserData] = useState(
-    JSON.parse(localStorage.getItem("userData")) || null
+    JSON.parse(localStorage.getItem("userData")) || {}
   );
-  const [showSearch, setShowSearch] = useState(true);
+  const [showSearch, setShowSearch] = useState(
+    Object.keys(userData).length === 0 ? true : false
+  );
 
   useEffect(() => {
     axios({
@@ -91,6 +93,8 @@ function ReturningUserPage() {
   //   }
   // }, []);
 
+  // {---------------------Api And Function for Github--------------}
+
   async function fetchData() {
     const response = await fetch(`https://api.github.com/users/${username}`);
     const data = await response.json();
@@ -104,12 +108,7 @@ function ReturningUserPage() {
     setShowSearch(false);
   }
 
-  function handleReset() {
-    setUsername("");
-    // setUserData(null);
-    // localStorage.removeItem("userData");
-    setShowSearch(true);
-  }
+  // {---------------------return statement start from below--------------}
 
   return (
     <>
@@ -142,6 +141,7 @@ function ReturningUserPage() {
             {showSearch ? (
               <form onSubmit={handleSubmit}>
                 {/* -----------------------input bar start from here------------ */}
+
                 <input
                   type="text"
                   placeholder="Enter GitHub username"
@@ -156,6 +156,7 @@ function ReturningUserPage() {
                   }}
                 />
                 {/* -----------------------LONIN button start from here------------ */}
+
                 <Button
                   variant="contained"
                   color="primary"
@@ -170,12 +171,6 @@ function ReturningUserPage() {
             ) : (
               <div>
                 <CardContent>
-                  <Grid item md={4} xs={3}>
-                    <Typography gutterBottom variant="body1" pt={1}>
-                      <h3>{userData.login}</h3>
-                    </Typography>
-                  </Grid>
-
                   <Grid item>
                     <img
                       style={{
@@ -187,27 +182,30 @@ function ReturningUserPage() {
                       src={userData.avatar_url}
                       alt="Students Img"
                     />
+
+                    <Button
+                      variant="outlined"
+                      sx={{
+                        marginTop: isActive ? "0px" : "32px",
+                        left: isActive ? "180px" : "320px",
+                      }}
+                    >
+                      <a
+                        href={userData.html_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: "none" }}
+                      >
+                        Go-To-GitHub
+                      </a>
+                    </Button>
                   </Grid>
 
-                  <Button variant="outlined" onClick={handleReset}>
-                    LOGOUT
-                  </Button>
-
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      left: "20px",
-                    }}
-                  >
-                    <a
-                      href={userData.html_url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      style={{ textDecoration: "none" }}
-                    >
-                      Go-To-GitHub
-                    </a>
-                  </Button>
+                  <Grid item md={2} xs={2}>
+                    <Typography gutterBottom variant="body1" pt={1}>
+                      <h4>{userData.login}</h4>
+                    </Typography>
+                  </Grid>
                 </CardContent>
               </div>
             )}
